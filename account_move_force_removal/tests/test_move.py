@@ -24,11 +24,20 @@ class TestMove(TransactionCase):
         cls.partner = cls.env["res.partner"].create(
             {"name": "Test customer", "customer_rank": 1}
         )
+        cls.billing_user = cls.env["res.users"].create(
+            {
+                "name": "Test billing user",
+                "login": "test_billing_user",
+                "groups_id": [
+                    (6, 0, [cls.env.ref("account.group_account_invoice").id])
+                ],
+            }
+        )
         cls.journal = cls.env["account.journal"].create(
             {
                 "name": "Test journal",
                 "type": "sale",
-                "code": "test-sale-jorunal",
+                "code": "TSALE",
                 "company_id": cls.env.company.id,
             }
         )
@@ -37,10 +46,9 @@ class TestMove(TransactionCase):
         )
         cls.company = cls.env.company
         cls.company.currency_id.active = True
-        account_type = cls.env.ref("account.data_account_type_other_income")
         cls.income_account = cls.env["account.account"].search(
             [
-                ("user_type_id", "=", account_type.id),
+                ("account_type", "=", "income_other"),
                 ("company_id", "=", cls.company.id),
             ],
             limit=1,
@@ -48,7 +56,7 @@ class TestMove(TransactionCase):
 
         invoice = Form(
             cls.env["account.move"].with_context(
-                default_type="out_invoice", default_company_id=cls.env.company.id
+                default_move_type="out_invoice", default_company_id=cls.env.company.id
             )
         )
         invoice.partner_id = cls.partner
@@ -71,27 +79,27 @@ class TestMove(TransactionCase):
         # Delete invoice while name isn't / and
         # user not in group_account_move_force_removal
         with self.assertRaises(UserError):
-            self.invoice.unlink()
+            self.invoice.with_user(self.billing_user).unlink()
         # Delete invoice (previously draft + cancel) and
         # user not in group_account_move_force_removal
         self.invoice.button_draft()
         self.invoice.button_cancel()
         with self.assertRaises(UserError):
-            self.invoice.unlink()
-        # Delete invoice while name isn't / and
+            self.invoice.with_user(self.billing_user).unlink()
+        # Delete posted invoice and
         # user in group_account_move_force_removal
-        self.env.user.groups_id += self.env.ref(
+        self.billing_user.groups_id += self.env.ref(
             "account_move_force_removal.group_account_move_force_removal"
         )
         with self.assertRaises(UserError):
-            self.invoice3.unlink()
+            self.invoice3.with_user(self.billing_user).unlink()
 
     def test_ok_invoice_error(self):
         # Delete invoice (previously draft + cancel) and
         # user in group_account_move_force_removal
         self.invoice.button_draft()
         self.invoice.button_cancel()
-        self.env.user.groups_id += self.env.ref(
+        self.billing_user.groups_id += self.env.ref(
             "account_move_force_removal.group_account_move_force_removal"
         )
-        self.invoice.unlink()
+        self.invoice.with_user(self.billing_user).unlink()
