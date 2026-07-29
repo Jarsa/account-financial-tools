@@ -3,7 +3,7 @@
     "summary": "Automatically write off invoice residual balances below a threshold",
     "version": "17.0.1.0.0",
     "author": "Jarsa",
-    "website": "https://jarsa.com",
+    "website": "https://github.com/OCA/account-financial-tools",
     "license": "LGPL-3",
     "category": "Accounting/Accounting",
     "depends": ["account"],

@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ===================================
 Account Invoice Write-off Threshold
 ===================================
@@ -17,7 +13,7 @@ Account Invoice Write-off Threshold
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/license-LGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-LGPL--3-blue.png
     :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
     :alt: License: LGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Faccount--financial--tools-lightgray.png?logo=github
@@ -32,18 +28,19 @@ Account Invoice Write-off Threshold
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
 
-This module automatically writes off residual balances on posted customer
-invoices and vendor bills when the outstanding amount falls below a
-configurable threshold.
+This module automatically writes off residual balances on posted
+customer invoices and vendor bills when the outstanding amount falls
+below a configurable threshold.
 
 When a small residual remains after a payment (due to rounding, currency
 differences, or commercial rounding by the payer), the module creates a
-journal entry that zeroes out the balance and reconciles it with the original
-invoice. Destination accounts are configurable separately for customer-side
-balances (income) and vendor-side balances (expense).
+journal entry that zeroes out the balance and reconciles it with the
+original invoice. Destination accounts are configurable separately for
+customer-side balances (income) and vendor-side balances (expense).
 
-A scheduled action can run the process periodically. A wizard allows on-demand
-execution with a preview step before any entries are committed.
+A scheduled action can run the process periodically. A wizard allows
+on-demand execution with a preview step before any entries are
+committed.
 
 For high-volume environments, install the companion module
 ``account_invoice_writeoff_threshold_queue`` to process write-offs as
@@ -57,19 +54,19 @@ background jobs via the OCA job queue.
 Configuration
 =============
 
-Go to **Accounting > Configuration > Settings**, scroll to
-**Write-off Threshold**, and set:
+Go to **Accounting > Configuration > Settings**, scroll to **Write-off
+Threshold**, and set:
 
-* **Write-off Threshold** — maximum residual to write off automatically.
-* **Write-off Income Account** — account for customer invoice residuals.
-* **Write-off Expense Account** — account for vendor bill residuals.
-* **Write-off Journal** — general journal for write-off entries.
-* **Write-off Batch Size** — number of invoices per background job
+- **Write-off Threshold** — maximum residual to write off automatically.
+- **Write-off Income Account** — account for customer invoice residuals.
+- **Write-off Expense Account** — account for vendor bill residuals.
+- **Write-off Journal** — general journal for write-off entries.
+- **Write-off Batch Size** — number of invoices per background job
   (relevant only when the queue companion is installed).
 
-To enable the scheduled action, activate
-*Write-off: Cancel small invoice residual balances* in
-**Technical > Automation > Scheduled Actions**.
+To enable the scheduled action, activate *Write-off: Cancel small
+invoice residual balances* in **Technical > Automation > Scheduled
+Actions**.
 
 Usage
 =====
@@ -78,20 +75,22 @@ Usage
 
 Go to **Accounting > Accounting > Write-off Small Balances**.
 
-1. Click **Preview** — lists all qualifying invoices and bills without making
-   any changes.
+1. Click **Preview** — lists all qualifying invoices and bills without
+   making any changes.
 2. Review the list and click **Write Off** to confirm.
 3. A log record opens with the details of all entries created.
 
 **Automatic execution**
 
-Enable the scheduled action in **Technical > Automation > Scheduled Actions**.
-By default it runs monthly. The interval is fully configurable.
+Enable the scheduled action in **Technical > Automation > Scheduled
+Actions**. By default it runs monthly. The interval is fully
+configurable.
 
 **Reviewing past executions**
 
-**Accounting > Accounting > Write-off Logs** shows the full history of every
-execution. Each log record links to the individual write-off journal entries.
+**Accounting > Accounting > Write-off Logs** shows the full history of
+every execution. Each log record links to the individual write-off
+journal entries.
 
 Bug Tracker
 ===========
@@ -107,12 +106,12 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Jarsa
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
 This module is maintained by the OCA.
 

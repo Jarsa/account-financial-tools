@@ -2,7 +2,6 @@ from .common import TestWriteoffCommon
 
 
 class TestWriteoffLog(TestWriteoffCommon):
-
     def test_log_state_is_done_after_sync_execution(self):
         """Synchronous execution must set log state to 'done'."""
         log = self.env["account.writeoff.log"].run_writeoff()
@@ -53,9 +52,7 @@ class TestWriteoffLog(TestWriteoffCommon):
         """_dispatch_writeoff in base module calls _process_batch synchronously."""
         invoice = self._create_posted_invoice("out_invoice", amount=100.0)
         self._partial_pay(invoice, 98.0)
-        candidates = self.env["account.writeoff.log"]._get_candidate_lines(
-            self.company
-        )
+        candidates = self.env["account.writeoff.log"]._get_candidate_lines(self.company)
         log = self.env["account.writeoff.log"].create(
             {
                 "threshold_amount": 10.0,

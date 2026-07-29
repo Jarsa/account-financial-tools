@@ -268,8 +268,10 @@ class AccountWriteoffLog(models.Model):
             domain.append(("move_id.invoice_date", ">=", date_from))
         if date_to:
             domain.append(("move_id.invoice_date", "<=", date_to))
-        return self.env["account.move.line"].search(domain).filtered(
-            lambda l: 0 < abs(l.amount_residual) < threshold
+        return (
+            self.env["account.move.line"]
+            .search(domain)
+            .filtered(lambda l: 0 < abs(l.amount_residual) < threshold)
         )
 
     @api.model
