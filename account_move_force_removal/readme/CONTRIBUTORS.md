@@ -1,0 +1,6 @@
+- [Tecnativa](https://www.tecnativa.com):
+  - Víctor Martínez
+  - Pedro M. Baeza
+- Alex Comba \<alex.comba@agilebg.com\>
+- [Sygel](https://www.sygel.es):
+  - Ángel García de la Chica Herrera
