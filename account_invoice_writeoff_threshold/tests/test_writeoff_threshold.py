@@ -5,7 +5,6 @@ from .common import TestWriteoffCommon
 
 
 class TestWriteoffThreshold(TestWriteoffCommon):
-
     def test_customer_invoice_below_threshold_becomes_paid(self):
         """Customer invoice with residual < threshold is fully reconciled."""
         invoice = self._create_posted_invoice("out_invoice", amount=100.0)

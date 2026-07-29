@@ -2,7 +2,7 @@
 <odoo>
     <record id="rule_writeoff_log_company" model="ir.rule">
         <field name="name">Write-off Log: multi-company rule</field>
-        <field name="model_id" ref="model_account_writeoff_log"/>
+        <field name="model_id" ref="model_account_writeoff_log" />
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
 </odoo>
