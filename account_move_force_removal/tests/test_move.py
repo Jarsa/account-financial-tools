@@ -28,7 +28,7 @@ class TestMove(TransactionCase):
             {
                 "name": "Test billing user",
                 "login": "test_billing_user",
-                "groups_id": [
+                "group_ids": [
                     (6, 0, [cls.env.ref("account.group_account_invoice").id])
                 ],
             }
@@ -46,13 +46,6 @@ class TestMove(TransactionCase):
         )
         cls.company = cls.env.company
         cls.company.currency_id.active = True
-        cls.income_account = cls.env["account.account"].search(
-            [
-                ("account_type", "=", "income_other"),
-                ("company_id", "=", cls.company.id),
-            ],
-            limit=1,
-        )
 
         invoice = Form(
             cls.env["account.move"].with_context(
@@ -66,7 +59,6 @@ class TestMove(TransactionCase):
             line_form.product_id = cls.product
             line_form.quantity = 1.0
             line_form.price_unit = 10
-            line_form.account_id = cls.income_account
         invoice = invoice.save()
         invoice.action_post()
         cls.invoice = invoice
@@ -88,7 +80,7 @@ class TestMove(TransactionCase):
             self.invoice.with_user(self.billing_user).unlink()
         # Delete posted invoice and
         # user in group_account_move_force_removal
-        self.billing_user.groups_id += self.env.ref(
+        self.billing_user.group_ids += self.env.ref(
             "account_move_force_removal.group_account_move_force_removal"
         )
         with self.assertRaises(UserError):
@@ -99,7 +91,7 @@ class TestMove(TransactionCase):
         # user in group_account_move_force_removal
         self.invoice.button_draft()
         self.invoice.button_cancel()
-        self.billing_user.groups_id += self.env.ref(
+        self.billing_user.group_ids += self.env.ref(
             "account_move_force_removal.group_account_move_force_removal"
         )
         self.invoice.with_user(self.billing_user).unlink()
