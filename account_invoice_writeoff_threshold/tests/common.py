@@ -1,18 +1,19 @@
 from odoo import fields
-from odoo.tests import TransactionCase
+
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 
 
-class TestWriteoffCommon(TransactionCase):
+class TestWriteoffCommon(AccountTestInvoicingCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.company = cls.env.ref("base.main_company")
+        cls.company = cls.company_data["company"]
         cls.income_account = cls.env["account.account"].create(
             {
                 "name": "Test Write-off Income",
                 "code": "TWOI",
                 "account_type": "income",
-                "company_id": cls.company.id,
+                "company_ids": [(6, 0, cls.company.ids)],
             }
         )
         cls.expense_account = cls.env["account.account"].create(
@@ -20,7 +21,7 @@ class TestWriteoffCommon(TransactionCase):
                 "name": "Test Write-off Expense",
                 "code": "TWOE",
                 "account_type": "expense",
-                "company_id": cls.company.id,
+                "company_ids": [(6, 0, cls.company.ids)],
             }
         )
         cls.writeoff_journal = cls.env["account.journal"].create(
@@ -41,15 +42,9 @@ class TestWriteoffCommon(TransactionCase):
             }
         )
         cls.partner = cls.env["res.partner"].create({"name": "Test Partner WO"})
-        cls.sale_journal = cls.env["account.journal"].search(
-            [("type", "=", "sale"), ("company_id", "=", cls.company.id)], limit=1
-        )
-        cls.purchase_journal = cls.env["account.journal"].search(
-            [("type", "=", "purchase"), ("company_id", "=", cls.company.id)], limit=1
-        )
-        cls.bank_journal = cls.env["account.journal"].search(
-            [("type", "=", "bank"), ("company_id", "=", cls.company.id)], limit=1
-        )
+        cls.sale_journal = cls.company_data["default_journal_sale"]
+        cls.purchase_journal = cls.company_data["default_journal_purchase"]
+        cls.bank_journal = cls.company_data["default_journal_bank"]
 
     def _create_posted_invoice(self, move_type="out_invoice", amount=100.0):
         """Create and post a simple invoice/bill."""
@@ -86,11 +81,11 @@ class TestWriteoffCommon(TransactionCase):
         )
         payment.action_post()
         invoice_line = move.line_ids.filtered(
-            lambda l: l.account_id.account_type
+            lambda line: line.account_id.account_type
             in ("asset_receivable", "liability_payable")
         )
         payment_line = payment.move_id.line_ids.filtered(
-            lambda l: l.account_id == invoice_line[:1].account_id
+            lambda line: line.account_id == invoice_line[:1].account_id
         )
         (invoice_line[:1] | payment_line[:1]).reconcile()
         return payment

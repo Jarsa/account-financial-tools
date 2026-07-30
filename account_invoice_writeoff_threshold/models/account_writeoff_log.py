@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -16,7 +16,6 @@ class AccountWriteoffLog(models.Model):
         ),
     )
     execution_date = fields.Datetime(
-        string="Execution Date",
         readonly=True,
         default=fields.Datetime.now,
     )
@@ -57,7 +56,6 @@ class AccountWriteoffLog(models.Model):
             ("done", "Done"),
             ("partial", "Partially Done"),
         ],
-        string="State",
         readonly=True,
         default="draft",
         help=(
@@ -74,7 +72,6 @@ class AccountWriteoffLog(models.Model):
         readonly=True,
     )
     total_lines = fields.Integer(
-        string="Total Lines",
         compute="_compute_totals",
         store=True,
     )
@@ -103,8 +100,7 @@ class AccountWriteoffLog(models.Model):
         date_to=None,
         company_id=None,
     ):
-        """
-        Entry point called by the wizard.
+        """Entry point called by the wizard.
 
         Validates configuration, finds candidate move lines, creates the log
         header, and delegates execution to _dispatch_writeoff(). The companion
@@ -147,9 +143,9 @@ class AccountWriteoffLog(models.Model):
         return {
             "type": "ir.actions.act_window",
             "res_model": "account.move",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("id", "in", move_ids)],
-            "name": _("Write-off Journal Entries"),
+            "name": self.env._("Write-off Journal Entries"),
         }
 
     # -------------------------------------------------------------------------
@@ -157,8 +153,7 @@ class AccountWriteoffLog(models.Model):
     # -------------------------------------------------------------------------
 
     def _dispatch_writeoff(self, log, candidates, writeoff_date=None):
-        """
-        Decide how to process candidate move lines and update the log state.
+        """Decide how to process candidate move lines and update the log state.
 
         Base behaviour: process all candidates synchronously in a single call
         and mark the log as done immediately.
@@ -176,8 +171,7 @@ class AccountWriteoffLog(models.Model):
 
     @api.model
     def _process_batch(self, log_id, move_line_ids, writeoff_date=None):
-        """
-        Write off a list of move lines and append lines to the log.
+        """Write off a list of move lines and append lines to the log.
 
         This method is designed to run inside its own database transaction
         when called from a queue job. In synchronous execution it runs inside
@@ -218,33 +212,31 @@ class AccountWriteoffLog(models.Model):
 
     @api.model
     def _check_writeoff_config(self, company):
-        """
-        Raise UserError if any required configuration field is missing.
+        """Raise UserError if any required configuration field is missing.
 
         :param company: res.company record
         """
         missing = []
         if not company.writeoff_threshold_amount:
-            missing.append(_("Write-off Threshold"))
+            missing.append(self.env._("Write-off Threshold"))
         if not company.writeoff_income_account_id:
-            missing.append(_("Write-off Income Account"))
+            missing.append(self.env._("Write-off Income Account"))
         if not company.writeoff_expense_account_id:
-            missing.append(_("Write-off Expense Account"))
+            missing.append(self.env._("Write-off Expense Account"))
         if not company.writeoff_journal_id:
-            missing.append(_("Write-off Journal"))
+            missing.append(self.env._("Write-off Journal"))
         if missing:
             raise UserError(
-                _(
+                self.env._(
                     "Write-off configuration is incomplete. "
-                    "Please set the following in Settings: %s"
+                    "Please set the following in Settings: %s",
+                    ", ".join(missing),
                 )
-                % ", ".join(missing)
             )
 
     @api.model
     def _get_candidate_lines(self, company, date_from=None, date_to=None):
-        """
-        Return unreconciled receivable/payable move lines on posted invoices
+        """Return unreconciled receivable/payable move lines on posted invoices
         whose absolute residual is greater than zero and below the threshold.
 
         :param company: res.company record
@@ -271,15 +263,14 @@ class AccountWriteoffLog(models.Model):
         return (
             self.env["account.move.line"]
             .search(domain)
-            .filtered(lambda l: 0 < abs(l.amount_residual) < threshold)
+            .filtered(lambda line: 0 < abs(line.amount_residual) < threshold)
         )
 
     @api.model
     def _create_writeoff_entry(
         self, move_line, income_account, expense_account, journal, writeoff_date=None
     ):
-        """
-        Create and post a balancing journal entry for move_line's residual,
+        """Create and post a balancing journal entry for move_line's residual,
         then reconcile the counterpart line with the original move_line.
 
         Debit / credit logic
@@ -312,7 +303,7 @@ class AccountWriteoffLog(models.Model):
             counterpart_debit, counterpart_credit = abs_residual, 0.0
             writeoff_debit, writeoff_credit = 0.0, abs_residual
 
-        ref = _("Write-off: %s") % move_line.move_id.name
+        ref = self.env._("Write-off: %s", move_line.move_id.name)
         writeoff_move = self.env["account.move"].create(
             {
                 "journal_id": journal.id,
@@ -348,7 +339,7 @@ class AccountWriteoffLog(models.Model):
         writeoff_move.action_post()
 
         counterpart_line = writeoff_move.line_ids.filtered(
-            lambda l: l.account_id == move_line.account_id
+            lambda line: line.account_id == move_line.account_id
         )
         (move_line | counterpart_line).reconcile()
         return writeoff_move

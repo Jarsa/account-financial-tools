@@ -1,6 +1,10 @@
+from odoo import fields
+from odoo.tests import tagged
+
 from .common import TestWriteoffCommon
 
 
+@tagged("post_install", "-at_install")
 class TestWriteoffLog(TestWriteoffCommon):
     def test_log_state_is_done_after_sync_execution(self):
         """Synchronous execution must set log state to 'done'."""
@@ -23,23 +27,17 @@ class TestWriteoffLog(TestWriteoffCommon):
 
     def test_log_writeoff_date_defaults_to_today(self):
         """When no writeoff_date is passed, log records today's date."""
-        from odoo import fields
-
         log = self.env["account.writeoff.log"].run_writeoff()
         self.assertEqual(log.writeoff_date, fields.Date.today())
 
     def test_log_writeoff_date_is_stored(self):
         """A custom writeoff_date must be stored on the log."""
-        from odoo import fields
-
         custom_date = fields.Date.from_string("2026-01-15")
         log = self.env["account.writeoff.log"].run_writeoff(writeoff_date=custom_date)
         self.assertEqual(log.writeoff_date, custom_date)
 
     def test_log_date_filters_are_stored(self):
         """date_from and date_to must be stored on the log."""
-        from odoo import fields
-
         date_from = fields.Date.from_string("2026-01-01")
         date_to = fields.Date.from_string("2026-03-31")
         log = self.env["account.writeoff.log"].run_writeoff(

@@ -11,12 +11,12 @@ class ResConfigSettings(models.TransientModel):
     writeoff_income_account_id = fields.Many2one(
         related="company_id.writeoff_income_account_id",
         readonly=False,
-        domain="[('deprecated', '=', False), ('company_id', '=', company_id)]",
+        domain="[('active', '=', True), ('company_ids', '=', company_id)]",
     )
     writeoff_expense_account_id = fields.Many2one(
         related="company_id.writeoff_expense_account_id",
         readonly=False,
-        domain="[('deprecated', '=', False), ('company_id', '=', company_id)]",
+        domain="[('active', '=', True), ('company_ids', '=', company_id)]",
     )
     writeoff_journal_id = fields.Many2one(
         related="company_id.writeoff_journal_id",

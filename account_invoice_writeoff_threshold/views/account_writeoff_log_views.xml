@@ -48,13 +48,13 @@
                     <notebook>
                         <page string="Written-off Entries">
                             <field name="line_ids">
-                                <tree>
+                                <list>
                                     <field name="invoice_id" />
                                     <field name="partner_id" />
                                     <field name="move_type" />
                                     <field name="amount" />
                                     <field name="writeoff_move_id" />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -67,7 +67,7 @@
         <field name="name">account.writeoff.log.list</field>
         <field name="model">account.writeoff.log</field>
         <field name="arch" type="xml">
-            <tree string="Write-off Logs" create="false" edit="false">
+            <list string="Write-off Logs" create="false" edit="false">
                 <field name="name" />
                 <field name="execution_date" />
                 <field name="writeoff_date" />
@@ -83,14 +83,14 @@
                 <field name="threshold_amount" />
                 <field name="total_lines" />
                 <field name="total_amount" />
-            </tree>
+            </list>
         </field>
     </record>
 
     <record id="action_writeoff_log" model="ir.actions.act_window">
         <field name="name">Write-off Logs</field>
         <field name="res_model">account.writeoff.log</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem

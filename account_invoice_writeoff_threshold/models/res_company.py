@@ -13,13 +13,13 @@ class ResCompany(models.Model):
     writeoff_income_account_id = fields.Many2one(
         comodel_name="account.account",
         string="Write-off Income Account",
-        domain="[('deprecated', '=', False)]",
+        domain="[('active', '=', True)]",
         help="Account credited when writing off a customer invoice residual.",
     )
     writeoff_expense_account_id = fields.Many2one(
         comodel_name="account.account",
         string="Write-off Expense Account",
-        domain="[('deprecated', '=', False)]",
+        domain="[('active', '=', True)]",
         help="Account debited when writing off a vendor bill residual.",
     )
     writeoff_journal_id = fields.Many2one(

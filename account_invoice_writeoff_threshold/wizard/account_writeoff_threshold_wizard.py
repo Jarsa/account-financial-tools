@@ -49,7 +49,7 @@ class AccountWriteoffThresholdWizard(models.TransientModel):
     @api.depends("preview_line_ids.amount_residual", "preview_line_ids.skip")
     def _compute_totals(self):
         for rec in self:
-            active = rec.preview_line_ids.filtered(lambda l: not l.skip)
+            active = rec.preview_line_ids.filtered(lambda line: not line.skip)
             rec.total_lines = len(active)
             rec.total_amount = sum(active.mapped("amount_residual"))
 
@@ -90,7 +90,7 @@ class AccountWriteoffThresholdWizard(models.TransientModel):
         company = self.company_id
         log_model._check_writeoff_config(company)
 
-        active_lines = self.preview_line_ids.filtered(lambda l: not l.skip)
+        active_lines = self.preview_line_ids.filtered(lambda line: not line.skip)
         move_line_ids = active_lines.mapped("move_line_id").ids
 
         log = log_model.create(
@@ -123,7 +123,6 @@ class AccountWriteoffThresholdWizardLine(models.TransientModel):
         ondelete="cascade",
     )
     skip = fields.Boolean(
-        string="Skip",
         default=False,
         help="Check to exclude this line from the write-off.",
     )

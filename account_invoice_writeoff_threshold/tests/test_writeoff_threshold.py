@@ -1,9 +1,11 @@
 from odoo import fields
 from odoo.exceptions import UserError
+from odoo.tests import tagged
 
 from .common import TestWriteoffCommon
 
 
+@tagged("post_install", "-at_install")
 class TestWriteoffThreshold(TestWriteoffCommon):
     def test_customer_invoice_below_threshold_becomes_paid(self):
         """Customer invoice with residual < threshold is fully reconciled."""
@@ -133,7 +135,7 @@ class TestWriteoffThreshold(TestWriteoffCommon):
             }
         )
         candidates = self.env["account.move.line"].browse(
-            wizard.preview_line_ids.filtered(lambda l: not l.skip)
+            wizard.preview_line_ids.filtered(lambda line: not line.skip)
             .mapped("move_line_id")
             .ids
         )

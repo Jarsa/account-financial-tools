@@ -32,7 +32,7 @@
                     <notebook invisible="not preview_line_ids">
                         <page string="Preview">
                             <field name="preview_line_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="skip" />
                                     <field
                                         name="invoice_id"
@@ -47,7 +47,7 @@
                                         name="amount_residual"
                                         decoration-muted="skip"
                                     />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

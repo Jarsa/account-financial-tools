@@ -1,8 +1,8 @@
 {
     "name": "Account Invoice Write-off Threshold",
     "summary": "Automatically write off invoice residual balances below a threshold",
-    "version": "17.0.1.0.0",
-    "author": "Jarsa",
+    "version": "19.0.1.0.0",
+    "author": "Jarsa, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/account-financial-tools",
     "license": "LGPL-3",
     "category": "Accounting/Accounting",
